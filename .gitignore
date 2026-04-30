@@ -27,3 +27,7 @@
 /tmp/storage/*
 !/tmp/storage/
 !/tmp/storage/.keep
+# Keep local Rails secrets and machine-specific DB config out of git.
+/config/database.yml
+/config/master.key
+
