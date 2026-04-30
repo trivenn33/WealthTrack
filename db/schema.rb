@@ -10,9 +10,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_23_004817) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_30_223649) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "holdings", force: :cascade do |t|
+    t.float "average_price"
+    t.datetime "created_at", null: false
+    t.bigint "portfolio_id", null: false
+    t.integer "quantity"
+    t.string "symbol"
+    t.datetime "updated_at", null: false
+    t.index ["portfolio_id"], name: "index_holdings_on_portfolio_id"
+  end
+
+  create_table "portfolios", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_portfolios_on_user_id"
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "portfolio_id", null: false
+    t.float "price"
+    t.integer "quantity"
+    t.string "symbol"
+    t.string "transaction_type"
+    t.datetime "updated_at", null: false
+    t.index ["portfolio_id"], name: "index_transactions_on_portfolio_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -20,4 +49,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_23_004817) do
     t.string "password_digest"
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "holdings", "portfolios"
+  add_foreign_key "portfolios", "users"
+  add_foreign_key "transactions", "portfolios"
 end

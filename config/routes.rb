@@ -7,6 +7,14 @@ Rails.application.routes.draw do
       post "login", to: "auth#login"
 
       get "me", to: "users#me"
+      resources :portfolios, only: [:create, :index]
+      resources :portfolios do
+        resources :holdings, only: [:index, :create]
+      end
+      resources :portfolios do
+        resources :holdings, only: [:index]
+        resources :transactions, only: [:create]
+      end
     end
   end
 end
