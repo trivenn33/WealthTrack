@@ -18,6 +18,7 @@ class TransactionService
 
         holding.quantity = new_quantity
         holding.average_price = new_avg_price
+
       else
         raise "Insufficient shares" if holding.quantity.to_i < transaction.quantity
 
@@ -25,9 +26,27 @@ class TransactionService
       end
 
       holding.save!
+
+      
+      live_price = StockPriceService.fetch_price(holding.symbol)
+
+      holding_data = {
+        symbol: holding.symbol,
+        quantity: holding.quantity,
+        average_price: holding.average_price,
+        live_price: live_price,
+        current_value: live_price ? holding.quantity * live_price : nil,
+        invested_value: holding.quantity * holding.average_price,
+        profit_loss: live_price ? (holding.quantity * live_price) - (holding.quantity * holding.average_price) : nil
+      }
+
+      return {
+        success: true,
+        transaction: transaction,
+        holding: holding_data
+      }
     end
 
-    { success: true, transaction: transaction }
   rescue => e
     { success: false, errors: [e.message] }
   end
